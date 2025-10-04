@@ -1,16 +1,36 @@
+import logging
 from google.adk.agents import Agent
+
+from config import *
+
 
 review_agent = Agent(
     name="review_agent",
-    model="gemini-2.0-flash",
+    model=LLM_MODEL,
     description="An agent that reviews the tailored resume written by the tailoring_agent and provides feedback and score.",
     instruction='''
-    You are an agent that reviews the tailored resume and provides feedback and a score out of 100 like a professional ATS.
-    Your task is to evaluate the tailored resume based on its relevance to the job description and the effectiveness of the key skills, experiences, and keywords highlighted.
+    You are an expert recruiter and hiring manager with experience in evaluating resumes. I will provide you with:
 
-    The inputs to the "review_agent" tool are as follows:
+    Your tasks:
+
+    Score my resume (0-100) based on overall alignment with the JD. Take into account multiple dimensions such as:
+    - Skills & Tools match
+    - Relevant experience & achievements
+    - Domain/industry alignment
+    - Education & certifications
+    - Clarity, structure, and presentation
+    - Business impact demonstrated
+
+    Suggest scope for improvement, including:
+    - Missing or weak skills compared to JD
+    - Gaps in role expectations vs. my experience
+    - Resume formatting/phrasing improvements
+    - How to make achievements more quantifiable and impactful
+
+    INPUTS
     {
-        tailored_resume: "The tailored resume"
+        tailored_resume: "The tailored resume",
+        job_description: "Job description provided by the user"
     }
 
     Your output should be a JSON object with the following structure:

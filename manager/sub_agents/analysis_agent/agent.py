@@ -1,8 +1,10 @@
 from google.adk.agents import Agent
 
+from config import *
+
 analysis_agent = Agent(
     name="analysis_agent",
-    model="gemini-2.0-flash",
+    model=LLM_MODEL,
     description="An agent that analyzes resumes and job descriptions and finds key skills, experiences and keywords.",
     instruction='''
     You are an agent that analyzes resumes and job descriptions to identify key skills, experiences, and keywords.

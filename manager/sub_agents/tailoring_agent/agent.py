@@ -1,8 +1,10 @@
 from google.adk.agents import Agent
 
+from config import *
+
 tailoring_agent = Agent(
     name="tailoring_agent",
-    model="gemini-2.0-flash",
+    model=LLM_MODEL,
     description="An agent that tailors resumes based on the analysis provided by the analysis_agent.",
     instruction='''
     You are an agent that tailors resumes based on the analysis provided by the analysis_agent.
