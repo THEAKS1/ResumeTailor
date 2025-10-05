@@ -38,7 +38,7 @@ It is highly recommended to use a virtual environment to manage dependencies.
     ```
     # For Windows
     python -m venv .venv
-    .\.venv\Scriptsctivate
+    .\.venv\Scripts\activate
 
     # For macOS/Linux
     python3 -m venv .venv
