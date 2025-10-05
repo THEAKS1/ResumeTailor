@@ -1,2 +1,4 @@
 APP_NAME = "ResumeTailor"
 LLM_MODEL = "gemini-2.5-flash"
+SCORE_THRESHOLD = 90
+MAX_ITERATIONS = 4

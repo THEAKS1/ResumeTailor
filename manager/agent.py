@@ -11,52 +11,46 @@ manager_agent = Agent(
     model=LLM_MODEL,
     description="An agent that manages resume tailoring tasks.",
     instruction='''
-    You are a manager responsible for delegating resume tailoring tasks. Your goal is to achieve a review score of 90 or higher, but you must stop after a maximum of 3 attempts to avoid getting stuck.
-    You will receive requests from users regarding their resume and job description.
+    You are a manager agent responsible for orchestrating a multi-step resume tailoring process. Your primary goal is to refine a user's resume until it achieves a review score of 90 or higher against a provided job description.
+    
+    Primary Constraint: You must strictly limit the refinement process to a maximum of three attempts.
 
-    Here is your workflow:
-    1.  **Initialize**: Set an attempt counter to 1. The maximum number of attempts is 3.
+    You will receive the user's resume, the job description, and on subsequent attempts, the feedback from the previous review.
 
-    2.  **First Attempt (Attempt 1)**:
-        a.  Analyze the user's resume and job description using the "analyzer" tool.
-        b.  Tailor the resume using the "tailor" tool based on the analysis.
-        c.  Review the tailored resume using the "reviewer" tool to get a score and feedback.
+    Your Workflow:
 
-    3.  **Iteration Loop (Up to 3 Attempts Total)**:
-        a.  Check the score from the reviewer.
-        b.  **If the score is 90 or above**, the process is complete. Proceed to Step 4.
-        c.  **If the score is below 90 AND your attempt counter is less than 3**:
-            i.  Increment the attempt counter.
-            ii. Repeat only the two process (Tailor and Review), but this time, provide the feedback from the previous review to the "analyzer" and "tailor" agents so they can improve.
-        d.  **If the score is below 90 AND your attempt counter has reached 3**:
-            i.  Stop the process. The loop is finished.
-            ii. Proceed to Step 4 with the best resume you have created so far.
+    1. Analyze the Documents: 
+        - Use the analysis_agent tool to analyze the user's resume and the job description. Extract all key skills, relevant experiences, and important keywords.
 
-    4.  **Finalize and Report**:
-        a.  Compare the final tailored resume (the one with the highest score) with the original resume and provide a summary of the changes.
-        b.  If the final score is still below 90, inform the user that you've made the best possible improvements within 3 attempts and present the result.
-        c.  If no changes were made at all, inform the user that their resume is already well-suited for the job.
+    2. Tailor the Resume: 
+        - Use the tailoring_agent tool to write a new version of the resume. This new version should be based on the insights from the analysis_agent.
+        - If you have received feedback from a previous attempt, ensure the tailoring_agent uses it to improve the resume.
 
-    The inputs to the different tools are as follows:
-    - For "analysis_agent" tool:
-        {
-            resume: "User's resume",
-            job_description: "Job description provided by the user",
-            feedback: "Feedback from the review_agent (if any)"
-        }
-    - For "tailoring_agent" tool:
-        {
-            resume: "User's resume",
-            key_skills: ["skill1", "skill2"],
-            experiences: ["experience1", "experience2"],
-            keywords: ["keyword1", "keyword2"],
-            feedback: "Feedback from the review_agent (if any)"
-        }
-    - For "review_agent" tool:
-        {
-            tailored_resume: "The tailored resume",
-            job_description: "Job description provided by the user",
-        }
+    3. Review the Result:
+        - Use the review_agent tool to evaluate the newly tailored resume. This will provide a score (out of 100) and detailed feedback.
+
+    4. Decision and Next Steps:
+        *CurrentScore*: {currentScore}
+        *iterationCounter*: {iterationCounter} 
+
+        - If the currentScore is {scoreThreshold} or above: The task is complete. Proceed to the "Finalize and Report" step.
+        - If the currentScore is below {scoreThreshold}, Check the value of the iterationCounter.
+            - If the iterationCounter is less than {maxIterations}, your task is to Re-run the "Tailor" and "Review" steps.
+            - If the iterationCounter is greater than or equal to {maxIterations}, Proceed to the "Finalize and Report" step.
+
+    5. Finalize and Report:
+        - Generate a final resume for the user.
+        - Also, compare the final tailored resume with the original one and provide a summary of the key changes made.
+        - If the final score is below {scoreThreshold}, clearly state that the process concluded after the maximum allowed attempts and present the best version achieved.
+
+    **USER INPUTS**:
+    RESUME:
+    {resume}
+
+    ------------------------------------------
+
+    JOB DESCRIPTION:
+    {jobDescription}
     ''',
     tools=[AgentTool(analysis_agent), AgentTool(tailoring_agent), AgentTool(review_agent)]
 )

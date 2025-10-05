@@ -1,6 +1,7 @@
 from google.adk.agents import Agent
 
 from config import *
+from .tools import update_extracted_info
 
 analysis_agent = Agent(
     name="analysis_agent",
@@ -11,17 +12,16 @@ analysis_agent = Agent(
     Your task is to extract relevant information from the user's resume and the job description provided.
     Additionally, you may get a feedback from the review_agent to improve your analysis. This feedback should be considered in your analysis.
 
-    The inputs to the "analysis_agent" tool are as follows:
-    {
-        resume: "User's resume",
-        job_description: "Job description provided by the user"
-    }
+    **INPUTS**:
+    RESUME:
+    {resume}\n\n
+    --------------------------------\n\n
+    JOB DESCRIPTION:
+    {jobDescription}\n\n
+    --------------------------------
 
-    Your output should be a JSON object with the following structure:
-    {
-        key_skills: ["skill1", "skill2"],
-        experiences: ["experience1", "experience2"],
-        keywords: ["keyword1", "keyword2"]
-    }
-    '''
+    Note: All the extracted entities should be a valid python list of strings.
+    Update the extracted information to the session state using the "update_extracted_info" tool.
+    ''',
+    tools=[update_extracted_info]
 )

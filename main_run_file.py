@@ -12,18 +12,28 @@ load_dotenv()
 
 async def agent_call_start(resume, jd, USER_ID):
     session_service = InMemorySessionService()
-    # initial_state = {
-    #     "userId": USER_ID,
-    #     "resume": "{resume}",
-    #     "jobDescription": "{jobDescription}",
-    #     "tailoredResume": ""
-    # }
+    initial_state = {
+        "userId": USER_ID,
+        "resume": f"{resume}",
+        "jobDescription": f"{jd}",
+        "tailoredResume": "",
+        "iterationCounter": 1,
+        "currentScore": 0,
+        "reviewFeedback": "",
+        "keySkills": [],
+        "experiences": [],
+        "keywords": [],
+        "maxIterations": MAX_ITERATIONS,
+        "scoreThreshold": SCORE_THRESHOLD
+    }
 
     SESSION_ID = str(uuid4())
     await session_service.create_session(
         app_name=APP_NAME,
         user_id=USER_ID,
-        session_id=SESSION_ID
+        session_id=SESSION_ID,
+        state=initial_state
+
     )
 
     runner = Runner(
@@ -33,11 +43,7 @@ async def agent_call_start(resume, jd, USER_ID):
     )
 
     new_message = types.Content(
-        role="user",parts=[types.Part(text="""
-                                      Resume: {resume}
-                                      -----------------------
-                                      Job Description: {jobDescription}
-                                      """.format(resume=resume, jobDescription=jd))]
+        role="user",parts=[types.Part(text=f"""Here is my resume and job description. Tailor my resume accordingly.""")]
     )
 
     for event in runner.run(
@@ -47,6 +53,4 @@ async def agent_call_start(resume, jd, USER_ID):
     ):
         if event.is_final_response():
             if event.content and event.content.parts:
-                out = str(event.content.parts[0].text)
-                print(out)
-                return out
+                return str(event.content.parts[0].text)
