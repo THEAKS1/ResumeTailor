@@ -1,10 +1,16 @@
+"""
+agent.py
+
+Defines the review_agent for reviewing tailored resumes.
+"""
+
 import logging
 from google.adk.agents import Agent
 
 from config import *
 from .tools import increment_iteration_counter, update_current_score
 
-
+# Create the review agent
 review_agent = Agent(
     name="review_agent",
     model=LLM_MODEL,
@@ -39,6 +45,9 @@ review_agent = Agent(
     3. Update the score and feedback in the state using the "update_current_score" tool.
 
     4. Use the tool "increment_iteration_counter" to increment the iteration counter in the session state each time you provide feedback.
+
+    **OUTPTUT**:
+    Once completed all the steps, provide an update to the manager that you have successfully updated the score and feedback in the state.
     ''',
     tools=[increment_iteration_counter, update_current_score]
 )

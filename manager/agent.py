@@ -5,6 +5,11 @@ from .sub_agents.analysis_agent.agent import analysis_agent
 from .sub_agents.tailoring_agent.agent import tailoring_agent
 from .sub_agents.review_agent.agent import review_agent
 from config import *
+from .resilientAgent import ResilientAgentTool
+
+resilient_analysis_agent = ResilientAgentTool(analysis_agent)
+resilient_tailoring_agent = ResilientAgentTool(tailoring_agent)
+resilient_review_agent = ResilientAgentTool(review_agent)
 
 manager_agent = Agent(
     name="manager",
@@ -52,5 +57,5 @@ manager_agent = Agent(
     JOB DESCRIPTION:
     {jobDescription}
     ''',
-    tools=[AgentTool(analysis_agent), AgentTool(tailoring_agent), AgentTool(review_agent)]
+    tools=[resilient_analysis_agent, resilient_tailoring_agent, resilient_review_agent]
 )

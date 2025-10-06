@@ -1,8 +1,15 @@
+"""
+agent.py
+
+Defines the analysis_agent for extracting info from resumes and job descriptions.
+"""
+
 from google.adk.agents import Agent
 
 from config import *
 from .tools import update_extracted_info
 
+# Create the analysis agent
 analysis_agent = Agent(
     name="analysis_agent",
     model=LLM_MODEL,

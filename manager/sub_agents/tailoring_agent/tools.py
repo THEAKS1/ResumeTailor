@@ -1,9 +1,16 @@
+"""
+tools.py
+
+Tool functions for the tailoring_agent.
+"""
+
 from google.adk.tools import ToolContext
 
 def update_tailored_resume(tailored_resume: str, tool_context: ToolContext):
     """
     A tool to update the tailored resume in the session state.
     """
+    # Update the tailored resume in the session state
     tool_context.state["tailoredResume"] = tailored_resume
     return {
         "action": "update_tailored_resume",
